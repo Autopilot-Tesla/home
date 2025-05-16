@@ -1,2 +1,2 @@
-# home
-My Real Website
+# Welcome
+My Real Website, for fun and for learning
