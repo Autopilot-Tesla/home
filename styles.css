@@ -1,0 +1,74 @@
+body {
+  font-family: 'Fira Code', monospace;
+  margin: 0;
+  background: #f3f6fa;
+  color: #222;
+}
+header {
+  background: #171a23;
+  color: #fff;
+  padding: 1rem 0;
+  text-align: center;
+}
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: .5rem 0 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+nav a {
+  color: #93e4c1;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+nav a:hover {
+  color: #ffafcc;
+}
+main {
+  max-width: 700px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+footer {
+  text-align: center;
+  color: #888;
+  padding: 1rem 0;
+  background: #f6f7fa;
+  margin-top: 2rem;
+  border-top: 1px solid #e3e3e3;
+}
+input, button {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: .5rem;
+  border-radius: .3rem;
+  border: 1px solid #ccc;
+  margin-bottom: .5rem;
+}
+button {
+  background: #22223b;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+}
+button:hover {
+  background: #4a4e69;
+}
+#posts-feed .blog-post {
+  background: #f3f6fa;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: .5rem;
+  border-left: 4px solid #93e4c1;
+}
+#posts-feed .date {
+  float: right;
+  color: #888;
+  font-size: 0.9em;
+}

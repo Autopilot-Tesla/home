@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog - Autopilot-Tesla</title>
+  <link rel="icon" type="image/png" href="Autopilot.png">
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="blog.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Autopilot-Tesla</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Me</a></li>
+        <li><a href="links.html">My Pages/Links</a></li>
+        <li><a href="support.html">Server Support</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section id="blog-section">
+      <h2>Blog</h2>
+      <div id="login-box">
+        <p>Login with your Google account to access the blog.</p>
+        <button id="login-btn">Login with Google</button>
+        <p id="login-status"></p>
+      </div>
+      <div id="blog-content" style="display:none;">
+        <form id="post-form">
+          <input type="text" id="post-input" placeholder="Write a new blog post..." required />
+          <button type="submit">Post</button>
+        </form>
+        <div id="posts-feed"></div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Autopilot-Tesla. All rights reserved.</p>
+  </footer>
+</body>
+</html>
