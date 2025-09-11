@@ -30,10 +30,14 @@
       </div>
       <div id="blog-content" style="display:none;">
         <form id="post-form">
+          <input type="text" id="post-title-input" placeholder="Title" required />
           <input type="text" id="post-input" placeholder="Write a new blog post..." required />
           <button type="submit">Post</button>
         </form>
-        <div id="posts-feed"></div>
+        <!-- Blog list view -->
+        <div id="posts-list-view"></div>
+        <!-- Single post view -->
+        <div id="single-post-view" style="display:none;"></div>
       </div>
     </section>
   </main>
