@@ -67,10 +67,21 @@ function showSinglePost(idx) {
       </div>
       <div class="single-post-line"></div>
       <div class="single-post-content">${escapeHTML(post.content)}</div>
+      <div class="comments-section">
+        <h3>Comments</h3>
+        <form id="comment-form">
+          <input type="text" id="comment-username" placeholder="Your name" required />
+          <input type="text" id="comment-message" placeholder="Your comment..." required />
+          <button type="submit">Add Comment</button>
+        </form>
+        <div id="comments-list"></div>
+      </div>
       <button class="back-to-list-btn">Back</button>
     </div>
   `;
   singleView.querySelector('.back-to-list-btn').onclick = renderPostsList;
+  // Hook up comments for this post
+  if (window.setupCommentsForPost) window.setupCommentsForPost(idx);
   document.getElementById('posts-list-view').style.display = 'none';
   singleView.style.display = '';
 }
@@ -109,5 +120,4 @@ document.getElementById('post-form')?.addEventListener('submit', function(e){
   renderPostsList();
 });
 
-// Show list if already logged in (dev/test convenience)
 if (window.currentUserEmail) renderPostsList();
