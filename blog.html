@@ -24,13 +24,13 @@
   <main>
     <section id="blog-section">
       <h2>Blog</h2>
-      <div id="login-box">
+      <div id="login-box" style="display:none;">
         <p>Login to edit or create blog posts.</p>
         <button id="login-btn">Login</button>
         <p id="login-status"></p>
       </div>
-      <div id="blog-content" style="display:none;">
-        <form id="post-form">
+      <div id="blog-content">
+        <form id="post-form" style="display:none;">
           <input type="text" id="post-title-input" placeholder="Title" required />
           <input type="text" id="post-input" placeholder="Write a new blog post..." required />
           <button type="submit">Post</button>
