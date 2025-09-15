@@ -158,3 +158,38 @@ button:hover {
   background: #888;
 }
 
+/* Comments Section */
+.comments-section {
+  margin-top: 2.5rem;
+  background: #f3f6fa;
+  padding: 1.2rem;
+  border-radius: 1.2rem;
+}
+.comments-section h3 {
+  margin-top: 0;
+}
+#comments-list .comment {
+  margin-bottom: 1rem;
+  background: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: .7rem;
+  border-left: 4px solid #93e4c1;
+}
+#comment-form input {
+  margin-right: 1rem;
+}
+.upvote, .downvote {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  margin: 0 .25em;
+  color: #3f9a00;
+}
+.downvote {
+  color: #b00020;
+}
+.votes {
+  font-weight: bold;
+  margin: 0 .3em;
+}
