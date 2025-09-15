@@ -1,16 +1,20 @@
-// --- Google One Tap / OAuth2 simulation for demo ---
+// --- Login simulation for demo ---
 const allowedEmails = [
   'jianjjlee@gmail.com',
   '395918@cusdk8.org'
 ];
 
+function showEditOptions(loggedIn) {
+  document.getElementById('blog-content').style.display = loggedIn ? '' : 'none';
+  document.getElementById('login-box').style.display = loggedIn ? 'none' : '';
+}
+
 document.getElementById('login-btn').onclick = function() {
-  const email = prompt('Enter your Gmail address for demo login:');
+  const email = prompt('Enter your email to login:');
   if (allowedEmails.includes(email)) {
     document.getElementById('login-status').textContent = 'Login successful!';
-    document.getElementById('login-box').style.display = 'none';
-    document.getElementById('blog-content').style.display = '';
     window.currentUserEmail = email;
+    showEditOptions(true);
     renderPostsList();
   } else {
     document.getElementById('login-status').textContent = 'Access denied: email not allowed.';
@@ -33,7 +37,6 @@ function renderPostsList() {
   list.innerHTML = '';
   singleView.style.display = 'none';
   list.style.display = '';
-  // Render each post as a card (like image 4)
   posts.slice().reverse().forEach((post, idx) => {
     const div = document.createElement('div');
     div.className = 'blog-card';
@@ -44,26 +47,25 @@ function renderPostsList() {
         <div class="blog-card-line"></div>
       </div>
     `;
-    div.onclick = () => showSinglePost(posts.length - 1 - idx); // map idx back to original index
+    div.onclick = () => showSinglePost(posts.length - 1 - idx);
     list.appendChild(div);
   });
 }
 
-// --- Show single post view (like image 3) ---
+// --- Show single post view (like image 3) with hits.sh badge ---
 function showSinglePost(idx) {
   const posts = getPosts();
   const post = posts[idx];
   if (!post) return;
   const singleView = document.getElementById('single-post-view');
+  // hits.sh badge: change the url after 'https://hits.sh/' to match your blog post/permalink if desired
+  const hitsBadge = `<img src="https://hits.sh/autopilot-tesla.github.io/blog.html.svg?color=1197cc" alt="Hits" style="vertical-align:middle;margin-left:15px">`;
   singleView.innerHTML = `
     <div class="single-post-layout">
       <div class="single-post-title">${escapeHTML(post.title)}</div>
       <div class="single-post-line"></div>
       <div class="single-post-meta">${escapeHTML(post.date)}, written by ${escapeHTML(post.author)}
-        <span class="single-post-hits">
-          <span class="hits-label">HITS</span>
-          <span class="hits-green">&infin;</span>
-        </span>
+        ${hitsBadge}
       </div>
       <div class="single-post-line"></div>
       <div class="single-post-content">${escapeHTML(post.content)}</div>
@@ -120,4 +122,6 @@ document.getElementById('post-form')?.addEventListener('submit', function(e){
   renderPostsList();
 });
 
-if (window.currentUserEmail) renderPostsList();
+// Show posts to everyone on load
+showEditOptions(false);
+renderPostsList();
