@@ -4,18 +4,17 @@ const allowedEmails = [
   '395918@cusdk8.org'
 ];
 
+// Only show login/post form if user is logged in
 function showEditOptions(loggedIn) {
-  document.getElementById('blog-content').style.display = loggedIn ? '' : 'none';
+  document.getElementById('post-form').style.display = loggedIn ? '' : 'none';
   document.getElementById('login-box').style.display = loggedIn ? 'none' : '';
 }
-
 document.getElementById('login-btn').onclick = function() {
   const email = prompt('Enter your email to login:');
   if (allowedEmails.includes(email)) {
     document.getElementById('login-status').textContent = 'Login successful!';
     window.currentUserEmail = email;
     showEditOptions(true);
-    renderPostsList();
   } else {
     document.getElementById('login-status').textContent = 'Access denied: email not allowed.';
   }
@@ -52,14 +51,13 @@ function renderPostsList() {
   });
 }
 
-// --- Show single post view (like image 3) with hits.sh badge ---
+// --- Show single post view ---
 function showSinglePost(idx) {
   const posts = getPosts();
   const post = posts[idx];
   if (!post) return;
   const singleView = document.getElementById('single-post-view');
-  // hits.sh badge: change the url after 'https://hits.sh/' to match your blog post/permalink if desired
-  const hitsBadge = `<img src="https://hits.sh/autopilot-tesla.github.io/blog.html.svg?color=1197cc" alt="Hits" style="vertical-align:middle;margin-left:15px">`;
+  const hitsBadge = `<img src="https://hits.sh/autopilot-tesla.github.io/blog.html!badge.svg?style=flat-square&label=HITS" alt="HITS" style="vertical-align:middle;margin-left:15px">`;
   singleView.innerHTML = `
     <div class="single-post-layout">
       <div class="single-post-title">${escapeHTML(post.title)}</div>
@@ -122,6 +120,6 @@ document.getElementById('post-form')?.addEventListener('submit', function(e){
   renderPostsList();
 });
 
-// Show posts to everyone on load
+// Always show posts and comments to everyone
 showEditOptions(false);
 renderPostsList();
