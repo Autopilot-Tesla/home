@@ -1,16 +1,15 @@
-// === JSONBIN.IO COMMENTS BACKEND ===
-const BIN_ID = '68b38eb880b27952c6e7410f'; // your bin id
-const API_KEY = '$2a$10$zUL6NwE5DJypqSdYn2b4kuCKQ.PNDV7jmSARUAM5euXJKPj.gOTY6'; // your api key
+const BIN_ID = '68b38eb880b27952c6e7410f';
+const API_KEY = '$2a$10$zUL6NwE5DJypqSdYn2b4kuCKQ.PNDV7jmSARUAM5euXJKPj.gOTY6';
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-// Load all comments for all posts
 async function loadAllComments() {
   try {
     const res = await fetch(`${BIN_URL}/latest`, {
       headers: { 'X-Access-Key': API_KEY }
     });
-    if (!res.ok) throw new Error("Failed to fetch comments");
+    if (!res.ok) throw new Error("Failed to fetch comments: " + res.status);
     const data = await res.json();
+    console.log("Loaded comments:", data.record.commentsByPost);
     return data.record.commentsByPost || {};
   } catch (e) {
     console.error(e);
@@ -18,10 +17,9 @@ async function loadAllComments() {
   }
 }
 
-// Save all comments for all posts
 async function saveAllComments(commentsByPost) {
   try {
-    await fetch(BIN_URL, {
+    const res = await fetch(BIN_URL, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -29,24 +27,32 @@ async function saveAllComments(commentsByPost) {
       },
       body: JSON.stringify({ commentsByPost })
     });
+    if (!res.ok) throw new Error("Failed to save comments: " + res.status);
+    const data = await res.json();
+    console.log("Saved comments:", data);
+    return data;
   } catch (e) {
     console.error(e);
   }
 }
 
-// Setup comment form and voting for a given post index
 window.setupCommentsForPost = function(postIdx) {
+  console.log("setupCommentsForPost called, postIdx:", postIdx);
   renderComments(postIdx);
 
-  // Use MutationObserver to wait for the form if it doesn't exist yet
-  function attachFormHandler() {
+  setTimeout(() => {
     const form = document.getElementById('comment-form');
     if (form) {
+      console.log("comment-form found, attaching onsubmit");
       form.onsubmit = async function(e) {
         e.preventDefault();
+        console.log("comment-form submitted");
         const username = document.getElementById('comment-username').value.trim();
         const message = document.getElementById('comment-message').value.trim();
-        if (!username || !message) return;
+        if (!username || !message) {
+          console.log("Empty username or message");
+          return;
+        }
         const now = new Date();
         const dateString = now.toLocaleDateString();
         const timeString = now.toLocaleTimeString();
@@ -64,26 +70,20 @@ window.setupCommentsForPost = function(postIdx) {
         document.getElementById('comment-message').value = '';
         renderComments(postIdx);
       };
-      return true;
+    } else {
+      console.error("comment-form not found in DOM");
     }
-    return false;
-  }
-
-  if (!attachFormHandler()) {
-    // If form not found, observe until it appears
-    const observer = new MutationObserver(() => {
-      if (attachFormHandler()) observer.disconnect();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-  }
+  }, 0);
 };
 
-// Render comments for a single post
 async function renderComments(postIdx) {
   const commentsByPost = await loadAllComments();
   const comments = commentsByPost[postIdx] || [];
   const list = document.getElementById('comments-list');
-  if (!list) return;
+  if (!list) {
+    console.error("comments-list not found in DOM");
+    return;
+  }
   list.innerHTML = '';
   comments.forEach((c, idx) => {
     const div = document.createElement('div');
@@ -97,7 +97,6 @@ async function renderComments(postIdx) {
     `;
     list.appendChild(div);
   });
-  // Add upvote/downvote listeners
   Array.from(list.querySelectorAll('.upvote')).forEach(btn => {
     btn.onclick = async function() {
       await voteComment(postIdx, parseInt(btn.getAttribute('data-idx')), 1);
@@ -120,7 +119,6 @@ async function voteComment(postIdx, commentIdx, delta) {
   }
 }
 
-// Escape HTML utility
 function escapeHTML(str) {
   return (str || '').replace(/[&<>"']/g, function(m) {
     return {
