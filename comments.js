@@ -5,47 +5,65 @@ const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
 // Load all comments for all posts
 async function loadAllComments() {
-  const res = await fetch(`${BIN_URL}/latest`, {
-    headers: { 'X-Access-Key': API_KEY }
-  });
-  const data = await res.json();
-  // Data structure: { commentsByPost: { [postIdx]: [ {username, message, date, votes} ] } }
-  return data.record.commentsByPost || {};
+  try {
+    const res = await fetch(`${BIN_URL}/latest`, {
+      headers: { 'X-Access-Key': API_KEY }
+    });
+    if (!res.ok) throw new Error("Failed to fetch comments");
+    const data = await res.json();
+    return data.record.commentsByPost || {};
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
 }
 
 // Save all comments for all posts
 async function saveAllComments(commentsByPost) {
-  await fetch(BIN_URL, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Access-Key': API_KEY
-    },
-    body: JSON.stringify({ commentsByPost })
-  });
+  try {
+    await fetch(BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Key': API_KEY
+      },
+      body: JSON.stringify({ commentsByPost })
+    });
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 // Setup comment form and voting for a given post index
 window.setupCommentsForPost = function(postIdx) {
   renderComments(postIdx);
-  document.getElementById('comment-form').onsubmit = async function(e) {
-    e.preventDefault();
-    const username = document.getElementById('comment-username').value.trim();
-    const message = document.getElementById('comment-message').value.trim();
-    if (!username || !message) return;
-    const commentsByPost = await loadAllComments();
-    if (!commentsByPost[postIdx]) commentsByPost[postIdx] = [];
-    commentsByPost[postIdx].push({
-      username,
-      message,
-      date: new Date().toLocaleString(),
-      votes: 0
-    });
-    await saveAllComments(commentsByPost);
-    document.getElementById('comment-username').value = '';
-    document.getElementById('comment-message').value = '';
-    renderComments(postIdx);
-  };
+
+  // Wait for the form to exist before attaching the handler!
+  setTimeout(() => {
+    const form = document.getElementById('comment-form');
+    if (form) {
+      form.onsubmit = async function(e) {
+        e.preventDefault();
+        const username = document.getElementById('comment-username').value.trim();
+        const message = document.getElementById('comment-message').value.trim();
+        if (!username || !message) return;
+        const commentsByPost = await loadAllComments();
+        if (!commentsByPost[postIdx]) commentsByPost[postIdx] = [];
+        commentsByPost[postIdx].push({
+          username,
+          message,
+          date: new Date().toLocaleString(),
+          votes: 0
+        });
+        await saveAllComments(commentsByPost);
+        document.getElementById('comment-username').value = '';
+        document.getElementById('comment-message').value = '';
+        renderComments(postIdx);
+      };
+    } else {
+      console.error("comment-form not found in DOM");
+    }
+  }, 0);
 };
 
 // Render comments for a single post
@@ -53,6 +71,7 @@ async function renderComments(postIdx) {
   const commentsByPost = await loadAllComments();
   const comments = commentsByPost[postIdx] || [];
   const list = document.getElementById('comments-list');
+  if (!list) return;
   list.innerHTML = '';
   comments.forEach((c, idx) => {
     const div = document.createElement('div');
