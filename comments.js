@@ -38,8 +38,8 @@ async function saveAllComments(commentsByPost) {
 window.setupCommentsForPost = function(postIdx) {
   renderComments(postIdx);
 
-  // Wait for the form to exist before attaching the handler!
-  setTimeout(() => {
+  // Use MutationObserver to wait for the form if it doesn't exist yet
+  function attachFormHandler() {
     const form = document.getElementById('comment-form');
     if (form) {
       form.onsubmit = async function(e) {
@@ -47,12 +47,16 @@ window.setupCommentsForPost = function(postIdx) {
         const username = document.getElementById('comment-username').value.trim();
         const message = document.getElementById('comment-message').value.trim();
         if (!username || !message) return;
+        const now = new Date();
+        const dateString = now.toLocaleDateString();
+        const timeString = now.toLocaleTimeString();
         const commentsByPost = await loadAllComments();
         if (!commentsByPost[postIdx]) commentsByPost[postIdx] = [];
         commentsByPost[postIdx].push({
           username,
           message,
-          date: new Date().toLocaleString(),
+          date: dateString,
+          time: timeString,
           votes: 0
         });
         await saveAllComments(commentsByPost);
@@ -60,10 +64,18 @@ window.setupCommentsForPost = function(postIdx) {
         document.getElementById('comment-message').value = '';
         renderComments(postIdx);
       };
-    } else {
-      console.error("comment-form not found in DOM");
+      return true;
     }
-  }, 0);
+    return false;
+  }
+
+  if (!attachFormHandler()) {
+    // If form not found, observe until it appears
+    const observer = new MutationObserver(() => {
+      if (attachFormHandler()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
 };
 
 // Render comments for a single post
@@ -77,7 +89,7 @@ async function renderComments(postIdx) {
     const div = document.createElement('div');
     div.className = 'comment';
     div.innerHTML = `
-      <strong>${escapeHTML(c.username)}</strong> (${escapeHTML(c.date)}):<br>
+      <strong>${escapeHTML(c.username)}</strong> (${escapeHTML(c.date)} ${escapeHTML(c.time)}):<br>
       ${escapeHTML(c.message)}<br>
       <button class="upvote" data-idx="${idx}">⬆️</button>
       <span class="votes">${c.votes || 0}</span>
